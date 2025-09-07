@@ -36,15 +36,21 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          # Add a 404.html for GitHub Pages SPA routing
+          cp out/404.html out/404/404.html 2>/dev/null || :
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        with:
+          static_site_generator: "next"
+          build_environment: "production"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'out/.'
+          path: 'out/'
 
       - name: Deploy to GitHub Pages
         id: deployment
