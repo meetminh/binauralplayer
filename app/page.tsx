@@ -13,10 +13,6 @@ export default function BinauralPage() {
       <section className="lg:col-span-2">
         <BinauralPlayer
           ref={playerRef}
-          defaultBaseHz={220}
-          defaultBeatHz={6}
-          defaultVolume={0.22}
-          defaultFadeSec={0.5}
           onStart={() => {
             // Optionally: auto-start timer here if desired (controlled in SessionTimer)
           }}

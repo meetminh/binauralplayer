@@ -1,12 +1,12 @@
 "use client";
 
-import { useBinauralBeat } from "@/hooks/useBinauralBeat";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import { useBinauralBeat } from "@/hooks/useBinauralBeat";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 export type PlayerHandle = {
   start: () => Promise<void>;
@@ -25,9 +25,9 @@ type Props = {
 
 const BinauralPlayerInner = (
   {
-    defaultBaseHz = 220,
-    defaultBeatHz = 6,
-    defaultVolume = 0.2,
+    defaultBaseHz = 240,
+    defaultBeatHz = 15,
+    defaultVolume = 0.3,
     defaultFadeSec = 0.5,
     onStart,
     onStop,
@@ -45,6 +45,13 @@ const BinauralPlayerInner = (
   const [lowLatency, setLowLatency] = useState(true);
 
   const PRESETS = [
+    {
+      key: "Deep Focus 💡",
+      baseHz: 240,
+      beatHz: 15,
+      volume: 0.3,
+      fadeSec: 0.5,
+    },
     // Evidence suggests theta (~6 Hz) is useful for anxiety reduction; alpha is mixed. See citations in code review.
     {
       key: "Reduce Anxiety 🧘",
@@ -61,17 +68,11 @@ const BinauralPlayerInner = (
       volume: 0.18,
       fadeSec: 1.2,
     },
-    // Working memory / focus shows best signals around ~15 Hz beta in several studies.
-    {
-      key: "Deep Focus 💡",
-      baseHz: 240,
-      beatHz: 15,
-      volume: 0.3,
-      fadeSec: 0.5,
-    },
   ] as const;
 
-  const [activePreset, setActivePreset] = useState<string | null>(null);
+  const [activePreset, setActivePreset] = useState<string | null>(
+    "Deep Focus 💡"
+  );
 
   const applyPreset = (p: (typeof PRESETS)[number]) => {
     // override only relevant player params; keep other state intact
@@ -121,19 +122,38 @@ const BinauralPlayerInner = (
 
       <CardContent className="space-y-5">
         {/* Preset badges */}
-        <div className="flex gap-2">
-          {PRESETS.map((p) => (
-            <Button
-              key={p.key}
-              size="sm"
-              variant={activePreset === p.key ? "default" : "secondary"}
-              className="rounded-full cursor-pointer"
-              onClick={() => applyPreset(p)}
-              aria-label={`Apply ${p.key} preset`}
-            >
-              {p.key}
-            </Button>
-          ))}
+        <div className="flex items-center gap-2">
+          {PRESETS.map((p) => {
+            let tooltipTitle = "";
+            let tooltipText = "";
+            if (p.key.startsWith("Reduce Anxiety")) {
+              tooltipTitle = "Reduce Anxiety (6 Hz theta)";
+              tooltipText =
+                "Theta (~6 Hz) beats are linked to relaxation/anxiety relief in several studies. Try 10–20 min at low volume.";
+            } else if (p.key.startsWith("Unwind & Sleep")) {
+              tooltipTitle = "Unwind & Sleep (4–5 Hz theta/delta)";
+              tooltipText =
+                "Lower theta to near-delta can support sleep onset and deep relaxation. Use 20–30 min before bed.";
+            } else if (p.key.startsWith("Deep Focus")) {
+              tooltipTitle = "Deep Focus (15 Hz beta)";
+              tooltipText =
+                "~15 Hz has shown improvements in working memory and reduced mental fatigue. Use 25–45 min work blocks.";
+            }
+
+            return (
+              <Button
+                key={p.key}
+                size="sm"
+                variant={activePreset === p.key ? "default" : "secondary"}
+                className="rounded-full cursor-pointer"
+                onClick={() => applyPreset(p)}
+                aria-label={`Apply ${p.key} preset`}
+                title={tooltipTitle + " – " + tooltipText}
+              >
+                {p.key}
+              </Button>
+            );
+          })}
         </div>
 
         {/* Base Frequency */}
