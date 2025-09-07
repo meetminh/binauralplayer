@@ -109,6 +109,36 @@ Recent studies (2020-2023) have shown promising results:
 - Consult a healthcare professional if you have any medical conditions
 - **Gamma (30-100 Hz)**: Peak cognitive functioning
 
+## 🚀 Deployment
+
+This application is configured to be deployed to GitHub Pages. Here's how to deploy it:
+
+### Prerequisites for Deployment
+- GitHub account
+- Node.js 18+ and npm
+
+### Deployment Steps
+
+1. **Push your code to GitHub** (if you haven't already):
+   ```bash
+   git add .
+   git commit -m "chore: prepare for GitHub Pages deployment"
+   git push origin main
+   ```
+
+2. **Enable GitHub Pages** in your repository settings:
+   - Go to your repository on GitHub
+   - Click on "Settings" > "Pages"
+   - Under "Source", select "GitHub Actions"
+
+3. **Trigger the deployment**:
+   - The deployment will automatically run when you push to the `main` branch
+   - You can also manually trigger it in the "Actions" tab
+
+4. **Access your deployed app**:
+   - Once deployed, your app will be available at:
+     `https://<your-username>.github.io/binauralplayer`
+
 ## 🚀 Getting Started
 
 ### Prerequisites
