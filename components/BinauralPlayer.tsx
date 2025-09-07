@@ -122,7 +122,7 @@ const BinauralPlayerInner = (
 
       <CardContent className="space-y-5">
         {/* Preset badges */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap gap-2">
           {PRESETS.map((p) => {
             let tooltipTitle = "";
             let tooltipText = "";
@@ -145,7 +145,7 @@ const BinauralPlayerInner = (
                 key={p.key}
                 size="sm"
                 variant={activePreset === p.key ? "default" : "secondary"}
-                className="rounded-full cursor-pointer"
+                className="rounded-full cursor-pointer whitespace-nowrap text-xs sm:text-sm"
                 onClick={() => applyPreset(p)}
                 aria-label={`Apply ${p.key} preset`}
                 title={tooltipTitle + " – " + tooltipText}
