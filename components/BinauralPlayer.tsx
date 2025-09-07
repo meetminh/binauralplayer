@@ -10,6 +10,7 @@ import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 
 export type PlayerHandle = {
   start: () => Promise<void>;
+  pause: () => Promise<void>;
   stop: () => Promise<void>;
 };
 
@@ -43,6 +44,47 @@ const BinauralPlayerInner = (
   // Optional: “safety” low-latency mode toggle (no-op placeholder for future)
   const [lowLatency, setLowLatency] = useState(true);
 
+  const PRESETS = [
+    // Evidence suggests theta (~6 Hz) is useful for anxiety reduction; alpha is mixed. See citations in code review.
+    {
+      key: "Reduce Anxiety 🧘",
+      baseHz: 200,
+      beatHz: 6,
+      volume: 0.2,
+      fadeSec: 1.0,
+    },
+    // Sleep onset / unwind benefits are often in lower theta/delta; keep volume gentle.
+    {
+      key: "Unwind & Sleep 🌙",
+      baseHz: 210,
+      beatHz: 4.5,
+      volume: 0.18,
+      fadeSec: 1.2,
+    },
+    // Working memory / focus shows best signals around ~15 Hz beta in several studies.
+    {
+      key: "Deep Focus 💡",
+      baseHz: 240,
+      beatHz: 15,
+      volume: 0.3,
+      fadeSec: 0.5,
+    },
+  ] as const;
+
+  const [activePreset, setActivePreset] = useState<string | null>(null);
+
+  const applyPreset = (p: (typeof PRESETS)[number]) => {
+    // override only relevant player params; keep other state intact
+    setParams((cur) => ({
+      ...cur,
+      baseHz: p.baseHz,
+      beatHz: p.beatHz,
+      volume: p.volume,
+      fadeSec: p.fadeSec,
+    }));
+    setActivePreset(p.key);
+  };
+
   useEffect(() => {
     // Here you could adjust internal settings if lowLatency toggles in future.
   }, [lowLatency]);
@@ -54,6 +96,10 @@ const BinauralPlayerInner = (
       start: async () => {
         await start();
         onStart?.();
+      },
+      pause: async () => {
+        await stop();
+        onStop?.();
       },
       stop: async () => {
         await stop();
@@ -74,6 +120,22 @@ const BinauralPlayerInner = (
       </CardHeader>
 
       <CardContent className="space-y-5">
+        {/* Preset badges */}
+        <div className="flex gap-2">
+          {PRESETS.map((p) => (
+            <Button
+              key={p.key}
+              size="sm"
+              variant={activePreset === p.key ? "default" : "secondary"}
+              className="rounded-full cursor-pointer"
+              onClick={() => applyPreset(p)}
+              aria-label={`Apply ${p.key} preset`}
+            >
+              {p.key}
+            </Button>
+          ))}
+        </div>
+
         {/* Base Frequency */}
         <div className="grid gap-2">
           <div className="flex items-center justify-between">
@@ -161,7 +223,7 @@ const BinauralPlayerInner = (
         <div className="flex gap-3">
           {!isRunning ? (
             <Button
-              className="w-full"
+              className="w-full cursor-pointer"
               onClick={async () => {
                 await start();
                 onStart?.();
@@ -172,7 +234,7 @@ const BinauralPlayerInner = (
           ) : (
             <Button
               variant="destructive"
-              className="w-full"
+              className="w-full cursor-pointer"
               onClick={async () => {
                 await stop();
                 onStop?.();
