@@ -122,7 +122,7 @@ This application is configured to be deployed to GitHub Pages. Here's how to dep
 1. **Push your code to GitHub** (if you haven't already):
    ```bash
    git add .
-   git commit -m "chore: prepare for GitHub Pages deployment"
+   git commit -m "chore: update deployment instructions"
    git push origin main
    ```
 
