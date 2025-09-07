@@ -19,6 +19,17 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
+          folder: .next/static
+          branch: gh-pages
+          target-folder: static
+          clean: true
+      - name: Deploy HTML and assets
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
           folder: out
           branch: gh-pages
+          clean-exclude: |
+            static
+            .nojekyll
+            _next/static
           clean: true
