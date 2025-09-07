@@ -7,7 +7,7 @@
     "start": "next start",
     "lint": "eslint",
     "deploy": "gh-pages -d out",
-    "build": "next build --turbopack && next export",
+    "build": "next build && next export",
     "predeploy": "npm run build"
   },
   "dependencies": {
